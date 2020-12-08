@@ -1,10 +1,15 @@
-from django.shortcuts import render
-
-# Create your views here.
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from knox.models import AuthToken
 from .serializers import UserSerializer, RegisterSerializer
+from django.contrib.auth import login
+from rest_framework import permissions
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from knox.views import LoginView as KnoxLoginView
+from rest_framework import status
+from django.contrib.auth.models import User
+from .serializers import ChangePasswordSerializer
+from rest_framework.permissions import IsAuthenticated 
 
 # Register API
 class RegisterAPI(generics.GenericAPIView):
@@ -19,12 +24,8 @@ class RegisterAPI(generics.GenericAPIView):
         "token": AuthToken.objects.create(user)[1]
         })
 
-from django.contrib.auth import login
 
-from rest_framework import permissions
-from rest_framework.authtoken.serializers import AuthTokenSerializer
-from knox.views import LoginView as KnoxLoginView
-
+#Login_API
 class LoginAPI(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
 
@@ -35,12 +36,7 @@ class LoginAPI(KnoxLoginView):
         login(request, user)
         return super(LoginAPI, self).post(request, format=None)
 
-from rest_framework import status
-from rest_framework import generics
-from rest_framework.response import Response
-from django.contrib.auth.models import User
-from .serializers import ChangePasswordSerializer
-from rest_framework.permissions import IsAuthenticated   
+  
 
 class ChangePasswordView(generics.UpdateAPIView):
     """
